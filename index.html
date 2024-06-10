@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego con Escenario de Terror</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: black;
+            position: relative;
+        }
+        canvas {
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        #horrorCanvas {
+            width: 100vw; /* Ancho igual al 100% del ancho de la ventana */
+            height: 80vh; /* Alto igual al 80% de la altura de la ventana */
+            z-index: 0;
+        }
+        #redirectButton {
+            position: fixed; right: 0; bottom: 0;
+            top: 90%; /* Ajustar posición vertical */
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: darkgreen;
+            color: black;
+            padding: 10px 20px;
+            font-size: 18px;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="horrorCanvas"></canvas>
+    <button id="redirectButton" onclick="redireccionar()">INICIAR</button>
+    <script>
+        // Configuración del canvas del escenario de terror
+        const horrorCanvas = document.getElementById('horrorCanvas');
+        const horrorCtx = horrorCanvas.getContext('2d');
+
+        horrorCanvas.width = window.innerWidth;
+        horrorCanvas.height = window.innerHeight * 0.8; // El 80% de la altura de la ventana
+
+        const moon = {
+            x: horrorCanvas.width - 150,
+            y: 100,
+            radius: 60
+        };
+
+        const trees = [
+            { x: 100, y: horrorCanvas.height - 200, width: 50, height: 200 },
+            { x: 300, y: horrorCanvas.height - 250, width: 60, height: 250 },
+            { x: 500, y: horrorCanvas.height - 150, width: 40, height: 150 }
+        ];
+
+        const fog = [];
+
+        for (let i = 0; i < 50; i++) {
+            fog.push({
+                x: Math.random() * horrorCanvas.width,
+                y: Math.random() * horrorCanvas.height,
+                radius: Math.random() * 30 + 20,
+                speed: Math.random() * 0.5 + 0.2
+            });
+        }
+
+        function drawMoon() {
+            horrorCtx.beginPath();
+            horrorCtx.arc(moon.x, moon.y, moon.radius, 0, Math.PI * 2, false);
+            horrorCtx.fillStyle = 'lightgrey';
+            horrorCtx.fill();
+            horrorCtx.closePath();
+        }
+
+        function drawTrees() {
+            horrorCtx.fillStyle = 'black';
+                        for (let tree of trees) {
+                horrorCtx.fillRect(tree.x, tree.y, tree.width, tree.height);
+                horrorCtx.beginPath();
+                horrorCtx.moveTo(tree.x + tree.width / 2, tree.y - 100);
+                horrorCtx.lineTo(tree.x, tree.y);
+                horrorCtx.lineTo(tree.x + tree.width, tree.y);
+                horrorCtx.fill();
+            }
+        }
+
+        function drawFog() {
+            horrorCtx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+            for (let f of fog) {
+                horrorCtx.beginPath();
+                horrorCtx.arc(f.x, f.y, f.radius, 0, Math.PI * 2, false);
+                horrorCtx.fill();
+            }
+        }
+
+        function updateFog() {
+            for (let f of fog) {
+                f.x += f.speed;
+                if (f.x > horrorCanvas.width) {
+                    f.x = -f.radius;
+                }
+            }
+        }
+
+        function animateHorrorScene() {
+            horrorCtx.clearRect(0, 0, horrorCanvas.width, horrorCanvas.height);
+            horrorCtx.fillStyle = 'darkslategray';
+            horrorCtx.fillRect(0, 0, horrorCanvas.width, horrorCanvas.height);
+
+            drawMoon();
+            drawTrees();
+            drawFog();
+            updateFog();
+
+            requestAnimationFrame(animateHorrorScene);
+        }
+
+        animateHorrorScene();
+
+        // Código JavaScript
+        function redireccionar() {
+            window.location.href = 'juego.html'; // Reemplaza 'otro_archivo.html' con el nombre de tu archivo HTML
+        }
+    </script>
+</body>
+</html>
